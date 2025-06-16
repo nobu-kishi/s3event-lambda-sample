@@ -14,7 +14,6 @@ data "archive_file" "lambda" {
 }
 
 # Lambda関数の作成
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
 resource "aws_lambda_function" "metadata_register" {
   function_name = var.app_name
   runtime       = "python3.9"
@@ -54,7 +53,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   }
 
   depends_on = [
-    # aws_lambda_function.metadata_register,
     aws_lambda_permission.allow_s3_invoke
   ]
 }
@@ -62,8 +60,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 #--------------------------------------------------------------
 # IAM Role
 #--------------------------------------------------------------
-
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 resource "aws_iam_role" "lambda_execution_role" {
   name = "${var.app_name}-iam-role"
   assume_role_policy = jsonencode({
@@ -81,7 +77,7 @@ resource "aws_iam_role" "lambda_execution_role" {
   })
 }
 
-resource "aws_iam_role_policy" "lambda_s3_dynamodb_policy" {
+resource "aws_iam_role_policy" "lambda_to_s3_and_dynamodb" {
   name = "LambdaS3DynamoDBPolicy"
   role = aws_iam_role.lambda_execution_role.id
   policy = jsonencode({
@@ -110,7 +106,6 @@ resource "aws_iam_role_policy" "lambda_s3_dynamodb_policy" {
 # CloudWatch
 #--------------------------------------------------------------
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function#cloudwatch-logging-and-permissions
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${var.app_name}"
   retention_in_days = 7

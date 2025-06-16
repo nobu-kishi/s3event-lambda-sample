@@ -3,8 +3,8 @@
 #--------------------------------------------------------------
 
 resource "aws_dynamodb_table" "metadata_table" {
-  name         = "${var.env}-metadata-table"
-  billing_mode = "PROVISIONED"
+  name           = "${var.env}-metadata-table"
+  billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
   hash_key       = "user-id"
@@ -25,11 +25,6 @@ resource "aws_dynamodb_table" "metadata_table" {
     name            = "file-name-index"
     range_key       = "file-name"
     projection_type = "ALL"
-  }
-
-  tags = {
-    Name        = var.app_name
-    Environment = var.env
   }
 }
 
@@ -60,8 +55,6 @@ resource "aws_appautoscaling_policy" "dynamodb_table_read_policy" {
 }
 
 resource "aws_appautoscaling_target" "write_scale_out" {
-  # max_capacity       = var.write_max_capacity
-  # min_capacity       = var.write_min_capacity
   max_capacity       = var.max_capacity
   min_capacity       = var.min_capacity
   resource_id        = "table/${aws_dynamodb_table.metadata_table.name}"

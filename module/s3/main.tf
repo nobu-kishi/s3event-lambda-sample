@@ -4,13 +4,8 @@
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
 resource "aws_s3_bucket" "file_storage" {
-  bucket = var.app_name
+  bucket        = var.app_name
   force_destroy = true
-
-  tags = {
-    Name        = var.app_name
-    Environment = var.env
-  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block
