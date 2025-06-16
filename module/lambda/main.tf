@@ -1,6 +1,6 @@
 locals {
-  raw_source = "../../src/index.py"
-  zip_source = "../../src/lambda_function_payload.zip"
+  raw_source = "${path.module}/../../src/index.py"
+  zip_source = "${path.module}/../../src/lambda_function_payload.zip"
 }
 
 #--------------------------------------------------------------
@@ -30,7 +30,7 @@ resource "aws_lambda_function" "metadata_register" {
   }
 
   filename         = local.zip_source
-  source_code_hash = filebase64sha256(local.zip_source)
+  source_code_hash = data.archive_file.lambda.output_sha256
 }
 
 resource "aws_lambda_permission" "allow_s3_invoke" {
